@@ -1,0 +1,43 @@
+---
+- name: Mount Vast NFS
+  hosts: localhost
+  become: true
+  gather_facts: true
+  
+  vars:
+    vast_nfs_server: "10.241.217.192"
+    vast_nfs_export: "/ifs/data/galala"
+    local_mount_point: "/mnt/vast-nfs"
+  
+  tasks:
+    - name: Verify we're running as root
+      ansible.builtin.command: id
+      register: id_check
+      
+    - name: Display user info
+      ansible.builtin.debug:
+        var: id_check.stdout
+    
+    - name: Create mount point
+      ansible.builtin.file:
+        path: "{{ local_mount_point }}"
+        state: directory
+        mode: '0755'
+    
+    - name: Mount Vast NFS
+      ansible.posix.mount:
+        path: "{{ local_mount_point }}"
+        src: "{{ vast_nfs_server }}:{{ vast_nfs_export }}"
+        fstype: nfs
+        opts: "vers=3,rw,sync"
+        state: mounted
+    
+    - name: Verify mount
+      ansible.builtin.command: "df -h {{ local_mount_point }}"
+      register: verify
+      
+    - name: Success
+      ansible.builtin.debug:
+        msg:
+          - "✅ NFS Mounted Successfully!"
+          - "{{ verify.stdout }}"
