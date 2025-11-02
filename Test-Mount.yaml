@@ -2,7 +2,7 @@
 - name: Mount Vast NFS
   hosts: localhost
   become: true
-  gather_facts: true
+  gather_facts: false
   
   vars:
     vast_nfs_server: "10.241.217.192"
