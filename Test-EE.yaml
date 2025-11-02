@@ -1,0 +1,10 @@
+---
+- name: Verify custom EE
+  hosts: localhost
+  tasks:
+    - name: Check packer
+      command: packer --version
+    - name: Check awscli
+      command: aws --version
+    - name: Check omsdk
+      command: python3 -m pip show omsdk
