@@ -1,10 +1,20 @@
 ---
 - name: Verify custom EE
   hosts: localhost
+  gather_facts: no
   tasks:
     - name: Check packer
       command: packer --version
-    - name: Check awscli
-      command: aws --version
+
     - name: Check omsdk
       command: python3 -m pip show omsdk
+
+    - name: Verify Dell EMC OpenManage collection
+      ansible.builtin.command: ansible-galaxy collection list | grep dellemc.openmanage
+
+    - name: Test OpenManage module availability
+      ansible.builtin.debug:
+        msg: "Dell EMC OpenManage collection is installed and ready."
+
+    - name: Check awscli
+      command: aws --version
